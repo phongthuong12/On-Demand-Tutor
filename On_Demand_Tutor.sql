@@ -1,5 +1,3 @@
-CREATE DATABASE On_Demand_Tutor;
-USE On_Demand_Tutor;
 
 CREATE TABLE roles(
     role_id INT PRIMARY KEY,
@@ -55,3 +53,8 @@ CREATE TABLE students (
     address VARCHAR(255),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE schedule(
+	schedule_id Int primary key IDENTITY(1,1),
+
+
+)
