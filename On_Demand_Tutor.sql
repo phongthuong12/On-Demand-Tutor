@@ -1,60 +1,81 @@
+CREATE DATABASE On_Demand_Tutor;
+GO
+
+USE On_Demand_Tutor;
+GO
 
 CREATE TABLE roles(
     role_id INT PRIMARY KEY,
     name VARCHAR(255)
 );
+GO
 
-CREATE TABLE users(
+CREATE TABLE grade (
+    grade_id INT PRIMARY KEY IDENTITY(1,1),
+    grade_level VARCHAR(100) NOT NULL, 
+    description TEXT,
+    
+);
+GO
+CREATE TABLE registerStatus (
+    registerStatus_id INT PRIMARY KEY IDENTITY(1,1),
+    status NCHAR(10) NOT NULL
+);
+GO
+
+CREATE TABLE registerDetail(
+    registerDetail_id INT PRIMARY KEY IDENTITY(1,1),
+    registerStatus_id INT NOT NULL,
+    FOREIGN KEY (registerStatus_id) REFERENCES registerStatus(registerStatus_id) 
+);
+GO
+
+CREATE TABLE schedule (
+    schedule_id INT PRIMARY KEY IDENTITY(1,1),
+    date DATE,
+    user_id INT NOT NULL
+);
+GO
+
+CREATE TABLE users (
     user_id INT PRIMARY KEY IDENTITY(1,1),
     name VARCHAR(255) NOT NULL,
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
+    email NVARCHAR(255) NOT NULL,
     password VARCHAR(100) NOT NULL,
     phone_number VARCHAR(15),
     address VARCHAR(255),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     role_id INT,
-    FOREIGN KEY (role_id) REFERENCES roles(role_id)  
+    schedule_id INT,
+    FOREIGN KEY (role_id) REFERENCES roles(role_id), 
+    FOREIGN KEY (schedule_id) REFERENCES schedule(schedule_id)
 );
+GO
 
 CREATE TABLE subjects (
     subject_id INT PRIMARY KEY IDENTITY(1,1),
     name VARCHAR(255) NOT NULL,
-    description TEXT
-);
-
-CREATE TABLE grade (
-    grade_id INT PRIMARY KEY IDENTITY(1,1),
-    subject_id INT NOT NULL,
-    grade_level INT NOT NULL, 
     description TEXT,
-    FOREIGN KEY (subject_id) REFERENCES subjects(subject_id)
+	grade_id INT,
+    register_id INT,
+    FOREIGN KEY (grade_id) REFERENCES grade(grade_id)
 );
+GO
 
-CREATE TABLE tutors (
-    tutor_id INT PRIMARY KEY IDENTITY(1,1), 
-    first_name VARCHAR(255) NOT NULL,         
-    last_name VARCHAR(255) NOT NULL,          
-    email VARCHAR(255) NOT NULL UNIQUE,       
-    password VARCHAR(100) NOT NULL,           
-    phone_number VARCHAR(15),                 
-    address VARCHAR(255),                    
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE register (
+    register_id INT PRIMARY KEY IDENTITY(1,1),
+    user_id INT,
+    subject_id INT,
+    schedule_id INT,
+    grade_id INT,
+    registerDetail_id INT,
+    description NVARCHAR(50),
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (subject_id) REFERENCES subjects(subject_id),
+    FOREIGN KEY (registerDetail_id) REFERENCES registerDetail(registerDetail_id)
 );
-
-CREATE TABLE students (
-    student_id INT PRIMARY KEY IDENTITY(1,1),
-    first_name VARCHAR(255) NOT NULL,
-    last_name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(100) NOT NULL,
-    phone_number VARCHAR(15),
-    address VARCHAR(255),
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-CREATE TABLE schedule(
-	schedule_id Int primary key IDENTITY(1,1),
+GO
 
 
-)
