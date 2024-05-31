@@ -37,13 +37,6 @@ CREATE TABLE registerDetail (
 );
 GO
 
-CREATE TABLE schedule (
-    schedule_id INT PRIMARY KEY IDENTITY(1,1),
-    date DATE,
-    user_id INT NOT NULL
-);
-GO
-
 CREATE TABLE users (
     user_id INT PRIMARY KEY IDENTITY(1,1),
     name VARCHAR(255) NOT NULL,
@@ -55,11 +48,17 @@ CREATE TABLE users (
     address VARCHAR(255),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     role_id INT,
-    schedule_id INT,
     review_id INT,
     FOREIGN KEY (review_id) REFERENCES review(review_id),
-    FOREIGN KEY (role_id) REFERENCES roles(role_id), 
-    FOREIGN KEY (schedule_id) REFERENCES schedule(schedule_id)
+    FOREIGN KEY (role_id) REFERENCES roles(role_id)
+);
+GO
+
+CREATE TABLE schedule (
+    schedule_id INT PRIMARY KEY IDENTITY(1,1),
+    date DATE,
+    user_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 GO
 
@@ -77,7 +76,6 @@ CREATE TABLE subjects (
     name VARCHAR(255) NOT NULL,
     description TEXT,
     grade_id INT,
-    register_id INT,
     review_id INT,
     FOREIGN KEY (grade_id) REFERENCES grade(grade_id),
     FOREIGN KEY (review_id) REFERENCES review(review_id)
@@ -94,6 +92,18 @@ CREATE TABLE register (
     description NVARCHAR(50),
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (subject_id) REFERENCES subjects(subject_id),
-    FOREIGN KEY (registerDetail_id) REFERENCES registerDetail(registerDetail_id)
+    FOREIGN KEY (registerDetail_id) REFERENCES registerDetail(registerDetail_id),
+    FOREIGN KEY (schedule_id) REFERENCES schedule(schedule_id)
+);
+GO
+
+CREATE TABLE Payment (
+    payment_id INT IDENTITY(1,1) PRIMARY KEY,    
+    amount DECIMAL(10, 2) NOT NULL,              
+    payment_date DATETIME DEFAULT GETDATE(),     
+    payment_method NVARCHAR(50) NOT NULL,        
+    payment_status NVARCHAR(20) NOT NULL,
+    user_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 GO
