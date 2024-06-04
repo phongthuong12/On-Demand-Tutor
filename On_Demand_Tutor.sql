@@ -10,13 +10,6 @@ CREATE TABLE roles (
 );
 GO
 
-CREATE TABLE review (
-    review_id INT PRIMARY KEY,
-    review_score DECIMAL(2,1) CHECK (review_score >= 1 AND review_score <= 5),
-    review_text NVARCHAR(255)
-);
-GO
-
 CREATE TABLE grade (
     grade_id INT PRIMARY KEY IDENTITY(1,1),
     grade_level VARCHAR(100) NOT NULL, 
@@ -86,9 +79,18 @@ CREATE TABLE subjects (
     name VARCHAR(255) NOT NULL,
     description TEXT,
     grade_id INT,
-    review_id INT,
-    FOREIGN KEY (grade_id) REFERENCES grade(grade_id),
-    FOREIGN KEY (review_id) REFERENCES review(review_id)
+    FOREIGN KEY (grade_id) REFERENCES grade(grade_id)
+);
+GO
+
+CREATE TABLE review (
+    review_id INT PRIMARY KEY IDENTITY(1,1),
+    review_score DECIMAL(2,1) CHECK (review_score >= 1 AND review_score <= 5) NOT NULL,
+    review_text NVARCHAR(255) NOT NULL,
+    subject_id INT NOT NULL,
+    tutor_id INT NOT NULL,
+    FOREIGN KEY (subject_id) REFERENCES subjects(subject_id),
+    FOREIGN KEY (tutor_id) REFERENCES tutor(tutor_id)
 );
 GO
 
@@ -100,17 +102,32 @@ CREATE TABLE service (
     description NVARCHAR(255),
     subject_id INT,
     grade_id INT,
+	video VARCHAR(2048),
     FOREIGN KEY (grade_id) REFERENCES grade(grade_id),
     FOREIGN KEY (subject_id) REFERENCES subjects(subject_id)
+);
+GO
+
+CREATE TABLE day_slot (
+    day_slot_id INT PRIMARY KEY IDENTITY(1,1),
+    day_slot DATE NOT NULL
+);
+GO
+
+CREATE TABLE time_slot (
+    time_slot_id INT PRIMARY KEY IDENTITY(1,1),
+    time_slot TIME NOT NULL
 );
 GO
 
 CREATE TABLE schedule (
     schedule_id INT PRIMARY KEY IDENTITY(1,1),
     service_id INT,
-    day_of_week NVARCHAR(50),
-    time_slot BIT,
-    FOREIGN KEY (service_id) REFERENCES service(service_id)
+    day_slot_id INT,
+    time_slot_id INT,
+    FOREIGN KEY (service_id) REFERENCES service(service_id),
+    FOREIGN KEY (time_slot_id) REFERENCES time_slot(time_slot_id),
+    FOREIGN KEY (day_slot_id) REFERENCES day_slot(day_slot_id)
 );
 GO
 
